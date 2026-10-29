@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fari AI - Andar Se Sara Kaam</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:sans-serif;background:#0b141a;color:#fff;padding-bottom:90px}
+.header{background:#202c33;padding:12px;text-align:center;position:sticky;top:0;z-index:10;border-bottom:2px solid #00a884}
+.badge{background:#00a884;color:#fff;padding:4px 10px;border-radius:12px;font-size:10px;margin-left:5px}
+.card{background:#202c33;border-radius:14px;padding:14px;margin:12px;max-width:600px;margin:auto}
+.btn{border:none;padding:15px;border-radius:10px;width:100%;margin-top:8px;cursor:pointer;font-weight:700;font-size:15px}
+.btn-main{background:linear-gradient(135deg,#00a884,#0084ff);color:#fff}
+.preview{width:100%;border-radius:12px;margin-top:10px;max-height:600px;object-fit:contain}
+.fixed-mic{position:fixed;right:15px;bottom:20px;width:56px;height:56px;border-radius:50%;background:#00a884;border:2px solid #fff;color:#fff;font-size:24px;z-index:9999}
+.fixed-mic.rec{background:#ff3b30;animation:pulse 1s infinite}
+@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
+.wave{position:fixed;right:80px;bottom:35px;background:#202c33;padding:8px 14px;border-radius:20px;font-size:11px;color:#00a884;display:none;z-index:9998;border:1px solid #00a884}
+.loading{color:#00ff9c;text-align:center;padding:20px}
+</style>
+</head><body>
+
+<div class="header"><b>Fari AI Studio</b><span class="badge">ANDAR SE SARA KAAM</span><span class="badge" style="background:#0084ff">NO BAHAR</span></div>
+
+<div class="card" style="border:2px solid #00a884">
+<h3>🖼️ Image Display - Fari Ke Andar Se</h3>
+<button onclick="document.getElementById('refImg').click()" style="width:100%;background:linear-gradient(135deg,#00a884,#0084ff);color:#fff;border:none;padding:12px;border-radius:10px;margin-top:8px;font-weight:700">📷 Gallery Se Pic Lao - Auto Andar Ayegi</button>
+<div id="genArea" style="margin-top:12px;min-height:260px;background:#111b21;border-radius:12px;padding:12px;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;color:#aaa">
+<div style="font-size:40px">🏠</div>
+<div style="margin-top:8px;color:#00ff9c;font-weight:700">Fari Ke Andar Se Sara Kaam</div>
+<div style="margin-top:4px;font-size:12px">Neeche prompt likho → Generate dabao → Image Fari ke andar hi banegi<br>No bahar - No meta.ai - No new tab - 100% andar</div>
+<div style="margin-top:8px;font-size:10px;color:#666">Real skin - Pores - No doll - 16K - Fari ke andar</div>
+</div>
+</div>
+
+<div class="card">
+<h3>📝 Prompt - Khali</h3>
+<textarea id="prompt" style="width:100%;padding:12px;border-radius:8px;background:#2a3942;color:#fff;border:none;min-height:90px;margin-top:8px;font-size:14px" placeholder="kala suit me ladki, darakht ke neeche, golden hour, real skin"></textarea>
+<button class="btn btn-main" onclick="genInside()">🏠 Fari Ke Andar Se Banao - No Bahar - Real 16K - Click Pe Foran</button>
+<div style="font-size:10px;color:#aaa;margin-top:6px;text-align:center">100% Fari ke andar - Click pe foran loading - Phir image - Real skin - No doll - No bahar jana</div>
+<div id="log" style="margin-top:8px;background:#000;color:#00ff9c;padding:8px;border-radius:6px;font-size:10px;display:none"></div>
+</div>
+
+<div class="card"><h3>📎 Reference</h3><input type="file" id="refImg" accept="image/*" style="display:none"><label for="refImg" style="display:block;background:#2a3942;padding:12px;border-radius:8px;text-align:center;cursor:pointer;margin-top:8px">📷 Gallery Kholo</label></div>
+
+<div id="wave" class="wave">🎤 Sun raha...</div>
+<button class="fixed-mic" id="micBtn">🎤</button>
+
+<script>
+let isRec=false, recog=null, finalText='', autoTrig=false;
+
+function showLog(m){
+  let l=document.getElementById('log');
+  l.style.display='block';
+  l.innerText=m;
+}
+
+function genInside(){
+  let p=document.getElementById('prompt').value.trim();
+  showLog('Andar wala button clicked - Prompt: '+p);
+  if(!p){
+    alert('Prompt likho! Jaise: kala suit me ladki');
+    showLog('Prompt khali - Alert');
+    return;
+  }
+  // FORAN RESPONSE - FARI KE ANDAR
+  document.getElementById('genArea').innerHTML='<div class="loading"><b>🏠 Fari Ke Andar Se Ban Rahi Hai...</b><br><br>⏳ Real Skin - No Doll - 16K<br>15 sec - Fari ke andar hi - No bahar<br><br><div style="width:100%;height:4px;background:#2a3942;border-radius:2px;overflow:hidden"><div style="width:70%;height:100%;background:linear-gradient(90deg,#00a884,#0084ff);animation:load 2s infinite"></div></div></div><style>@keyframes load{0%{transform:translateX(-100%)}100%{transform:translateX(200%)}}</style>';
+  showLog('Loading dikhaya - Fari ke andar - Image generate ho rahi...');
+  
+  let cleanP=p.replace(/\[.*\]/g,'').trim();
+  // BEST PROMPT - Real skin - No doll - Fari ke andar
+  let fullPrompt='real Pakistani woman, real human skin with visible pores freckles natural imperfections mole, NOT doll NOT plastic NOT smooth skin NOT anime NOT cartoon, '+cleanP+', intricate black embroidered shalwar kameez with gold zari threads detailed macro, long black wavy hair windy individual strands, ancient moss tree bark ultra detailed with lichen ferns, golden hour sunlight volumetric god rays dust particles visible, cinematic bokeh, Sony A7R V 85mm f1.2 GM lens, ultra sharp focus, hyper realistic raw photo, real person, photorealistic, masterpiece, Midjourney v6 raw style, 16k extreme ultra detailed, real skin texture, ultra sharp';
+  let enc=encodeURIComponent(fullPrompt);
+  let seed=Math.floor(Math.random()*9999999);
+  
+  // FARI KE ANDAR SE - BEST MODEL - NO BAHAR
+  let models=['flux','turbo','flux-realism'];
+  let tryModel=function(idx){
+    if(idx>=models.length){
+      showLog('Sab models fail - Internet check karo');
+      document.getElementById('genArea').innerHTML='<div style="color:#ff3b30;text-align:center">❌ Image nahi bani - Internet check karo<br><button class="btn btn-main" onclick="genInside()" style="margin-top:8px">🔄 Dobara Try - Fari Ke Andar Se</button></div>';
+      return;
+    }
+    let model=models[idx];
+    let url='https://image.pollinations.ai/prompt/'+enc+'?width=1024&height=1536&nologo=true&nofeed=true&seed='+seed+'&model='+model+'&enhance=true';
+    showLog('Model '+model+' try - Fari ke andar - '+url.substring(0,60));
+    let img=new Image();
+    img.crossOrigin='anonymous';
+    img.onload=function(){
+      showLog('Success - Model '+model+' - Fari ke andar image aayi!');
+      document.getElementById('genArea').innerHTML='<img src="'+this.src+'" class="preview"><div style="margin-top:8px;display:flex;gap:6px"><button class="btn" style="flex:1;background:#2a3942;padding:10px" onclick="window.open(\''+this.src+'\',\'_blank\')">📥 Save</button><button class="btn" style="flex:1;background:#00a884;padding:10px" onclick="genInside()">🔄 Dobara</button></div><div style="font-size:11px;color:#00ff9c;margin-top:6px;text-align:center">✅ Fari Ke Andar Se Bani - Real Skin - Pores - No Doll - 16K - No Bahar - 100% Andar</div>';
+    };
+    img.onerror=function(){
+      showLog('Model '+model+' fail - Next try - Fari ke andar...');
+      tryModel(idx+1);
+    };
+    img.src=url;
+  };
+  tryModel(0);
+}
+
+document.getElementById('refImg').addEventListener('change', function(e){
+  let f=e.target.files[0];
+  if(!f) return;
+  let r=new FileReader();
+  r.onload=function(ev){
+    document.getElementById('genArea').innerHTML='<img src="'+ev.target.result+'" class="preview"><div style="font-size:11px;color:#00ff9c;margin-top:6px;text-align:center">✅ Gallery Se - Fari Ke Andar Aayi - Andar Se Sara Kaam</div>';
+    showLog('Gallery pic - Fari ke andar aayi - Andar se kaam');
+  };
+  r.readAsDataURL(f);
+});
+
+document.getElementById('micBtn').addEventListener('click', async function(){
+  let btn=this, wave=document.getElementById('wave');
+  if(!isRec){
+    try{ let s=await navigator.mediaDevices.getUserMedia({audio:true}); s.getTracks().forEach(t=>t.stop()); }catch(e){ alert('Mic allow karo - Settings me'); return; }
+    let SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    if(!SR){ alert('Chrome browser use karo - Mic ke liye'); return; }
+    recog=new SR(); recog.lang='ur-PK'; recog.continuous=true; recog.interimResults=true;
+    let base=document.getElementById('prompt').value||''; finalText=base?base+' ':'';
+    recog.onstart=function(){ isRec=true; btn.classList.add('rec'); wave.style.display='block'; wave.innerText='🎤 Sun raha... Fari ke andar...'; };
+    recog.onresult=function(e){
+      let interim='';
+      for(let i=e.resultIndex;i<e.results.length;i++){
+        let t=e.results[i][0].transcript;
+        if(e.results[i].isFinal){
+          if(finalText.toLowerCase().indexOf(t.trim().toLowerCase())===-1) finalText+=t+' ';
+        } else interim+=t+' ';
+      }
+      let full=(finalText+interim).trim();
+      let words=full.split(' '); let clean=[];
+      for(let j=0;j<words.length;j++){ if(j==0 || words[j].toLowerCase()!=words[j-1].toLowerCase()) clean.push(words[j]); }
+      full=clean.join(' ');
+      document.getElementById('prompt').value=full;
+      if((full.toLowerCase().indexOf('image banao')!==-1 || full.toLowerCase().indexOf('photo banao')!==-1 || full.toLowerCase().indexOf('bana do')!==-1 || full.toLowerCase().indexOf('generate')!==-1) && !autoTrig){
+        autoTrig=true; wave.innerText='✨ Auto Fari ke andar...';
+        let cp=full.replace(/image banao|photo banao|pic banao|tasveer banao|bana do|generate kar/gi,'').trim();
+        document.getElementById('prompt').value=cp;
+        setTimeout(function(){ isRec=false; try{recog.stop();}catch(e){}; btn.classList.remove('rec'); wave.style.display='none'; genInside(); autoTrig=false; },900);
+      }
+    };
+    recog.onend=function(){ if(isRec){ try{recog.start();}catch(e){ isRec=false; btn.classList.remove('rec'); wave.style.display='none'; } } else { btn.classList.remove('rec'); wave.style.display='none'; } };
+    recog.onerror=function(){ isRec=false; btn.classList.remove('rec'); wave.style.display='none'; showLog('Mic error - Dobara try'); };
+    try{ recog.start(); }catch(e){ isRec=false; }
+  } else { isRec=false; try{recog.stop();}catch(e){}; btn.classList.remove('rec'); wave.style.display='none'; }
+});
+</script>
+</body></html>
